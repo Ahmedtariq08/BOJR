@@ -1,10 +1,6 @@
 package com.application.archive;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
@@ -84,10 +80,12 @@ class CommonsArchiver implements Archiver {
         ArchiveEntry entry;
         while ((entry = input.getNextEntry()) != null) {
             File file = new File(destination, entry.getName());
-            
+
             extractingReport.addToFileNameList(entry.getName());
 
-            if (!entry.isDirectory()) {
+            if(entry.isDirectory() && !file.exists()){
+                 file.mkdirs();
+            }else if (!entry.isDirectory()) {
                 IOUtils.copy(input, file);
             }
 
