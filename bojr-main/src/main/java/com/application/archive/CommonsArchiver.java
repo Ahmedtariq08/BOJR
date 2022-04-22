@@ -1,6 +1,10 @@
 package com.application.archive;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
@@ -36,9 +40,7 @@ class CommonsArchiver implements Archiver {
 
     @Override
     public File create(String archive, File destination, File... sources) throws IOException {
-        if(!destination.canWrite()){
-            throw new IllegalArgumentException("Can not write file to the Folder " + destination.getName() + ". Permission Denied.");
-        }
+
         IOUtils.requireDirectory(destination);
 
         File archiveFile = createNewArchiveFile(archive, getFilenameExtension(), destination);
@@ -82,12 +84,10 @@ class CommonsArchiver implements Archiver {
         ArchiveEntry entry;
         while ((entry = input.getNextEntry()) != null) {
             File file = new File(destination, entry.getName());
-
+            
             extractingReport.addToFileNameList(entry.getName());
 
-            if(entry.isDirectory() && !file.exists()){
-                 file.mkdirs();
-            }else if (!entry.isDirectory()) {
+            if (!entry.isDirectory()) {
                 IOUtils.copy(input, file);
             }
 
