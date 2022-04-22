@@ -36,7 +36,9 @@ class CommonsArchiver implements Archiver {
 
     @Override
     public File create(String archive, File destination, File... sources) throws IOException {
-
+        if(!destination.canWrite()){
+            throw new IllegalArgumentException("Can not write file to the Folder " + destination.getName() + ". Permission Denied.");
+        }
         IOUtils.requireDirectory(destination);
 
         File archiveFile = createNewArchiveFile(archive, getFilenameExtension(), destination);
